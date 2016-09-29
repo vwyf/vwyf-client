@@ -4,6 +4,7 @@ import sqlite3
 import bson
 import time
 import logging
+import apiclient
 from models import Question
 
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
@@ -11,12 +12,10 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 def _ctime():
   return str(int(time.time() * 1000))
 
-def init():
-  conn = sqlite3.connect('vwyf.db')
-  createTable(conn)
-  conn.close()
+def init(conn):
+  _createTable(conn)
 
-def createTable(conn):
+def _createTable(conn):
   logging.info("Initializing SQLite Table..")
   c = conn.cursor()
   c.execute('''
@@ -25,6 +24,7 @@ def createTable(conn):
         question TEXT,
         optionA TEXT,
         optionB TEXT,
+        priority INTEGER,
         timesUsed INTEGER DEFAULT 0
       )''')
   c.execute('''
@@ -37,6 +37,13 @@ def createTable(conn):
       )''')
   conn.commit()
 
+def addOrUpdateQuestion(conn, q):
+  c = conn.cursor()
+  c.execute('''
+    INSERT INTO questions (questionId, question, optionA, optionB, priority createdAt)
+    VALUES (?, ?, ?, ?, ?, ?)''', (q._id, q.text, q.optionA, q.optionB, q.priority, q.createdAt))
+  conn.commit()
+
 def addAnswer(conn, questionId, answer):
   now = _ctime()
   c = conn.cursor()
@@ -46,7 +53,7 @@ def addAnswer(conn, questionId, answer):
   conn.commit()
   logging.info("{now!s}: added new answer: {questionId!s} {answer!s}".format(**locals()))
 
-def syncAnswers():
+def syncAnswers(conn):
   c = conn.cursor()
   c.execute('''
       SELECT * FROM answers
@@ -55,6 +62,20 @@ def syncAnswers():
       LIMIT 50
       ''')
   answers = c.fetchall()
+  apiclient.postAnswers(map(_toAnswerDict, answers))
+
+def getAllQuestions(conn):
+  c = conn.cursor()
+  c.execute('''
+      SELECT * FROM questions 
+      ''')
+  questions = c.fetchall()
+  return map(Question.fromSql, question)
+
+def _toAnswerDict(ansArr):
+  return { 'questionId': ansArr[1], 'answer': ansArr[2], 'createdAt': ansArr[3] }
 
 if __name__ == "__main__":
-  init()
+  conn = sqlite3.connect('vwyf.db')
+  init(conn)
+  conn.close()
