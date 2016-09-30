@@ -2,89 +2,102 @@
 import sqlite3
 # part of pymongo library, used for generating mongo objectId on client side
 import bson
-import time
 import logging
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
 import apiclient
-# from models import Question
-from sqlobject import *
 
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-sqlhub.processConnection = connectionForURI('sqlite:/vwyf.db')
+import utils
 
-class Question(SQLObject):
-  questionId = StringCol()
-  question = StringCol()
-  optionA = StringCol()
-  optionB = StringCol()
-  createdAt = StringCol()
-  priority = IntCol()
+engine = create_engine('sqlite:///vwyf.db', echo=True)
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+# Session = sessionmaker()
+# Session.configure(bind=engine)
 
-class Answer(SQLObject):
-  questionId = StringCol()
-  answer = StringCol()
-  createdAt = StringCol()
-  savedToServer = BoolCol()
+class Question(Base):
+  __tablename__ = 'questions'
+  id = Column(String, primary_key=True)
+  question = Column(String)
+  option_a = Column(String)
+  option_b = Column(String)
+  created_at = Column(String)
+  priority = Column(Integer)
 
-class QuestionLog(SQLObject):
-  questionId = StringCol()
+  @staticmethod
+  def _update_or_insert_question(question, session):
+    record = session.query(Question).filter(Question.id==question.id).first()
+    if (record):
+      record.question = question.question
+      record.option_a = question.option_a
+      record.option_b = question.option_b
+      record.priority = question.priority
+    else:
+      session.add(question);
+
+  @staticmethod
+  def update_or_insert_questions(questions):
+    session = Session()
+    for question in questions:
+      _update_or_insert_question(question, session)
+    session.commit()
+
+class Answer(Base):
+  __tablename__ = 'answers'
+  id = Column(integer, primary_key=True)
+  questionId = Column(String)
+  answer = Column(String)
+  created_at = Column(String)
+  saved_to_server = Column(BOOLEAN)
+
+class QuestionLog(Base):
+  __tablename__ = 'question_logs'
+  id = Column(integer, primary_key=True)
+  questionId = Column(String)
   timestamp = StringCol()
+  
 
 # Question(questionId='my-q-id', question='how are you?', optionA='great', optionB='ok', priority=3)
 
+Base.metadata.create_all(engine)
 
-def _ctime():
-  return str(int(time.time() * 1000))
 
-def init(conn):
-  _createTable(conn)
+# def addAnswer(conn, questionId, answer):
+#   now = utils.ctime()
+#   c = conn.cursor()
+#   c.execute(
+#       '''INSERT INTO answers (questionId, answer, createdAt) VALUES (?, ?, ?)''',
+#       (questionId, answer, now))
+#   conn.commit()
+#   logging.info("{now!s}: added new answer: {questionId!s} {answer!s}".format(**locals()))
 
-def _createTable(conn):
-  logging.info("Initializing SQLite Tables..")
-  Question.createTable(ifNotExists=True)
-  Answer.createTable(ifNotExists=True)
-  QuestionLog.createTable(ifNotExists=True)
+# def syncAnswers(conn):
+#   c = conn.cursor()
+#   c.execute('''
+#       SELECT * FROM answers
+#       WHERE savedToServer == 0
+#       ORDER BY createdAt
+#       LIMIT 50
+#       ''')
+#   answers = c.fetchall()
+#   apiclient.postAnswers(map(_toAnswerDict, answers))
 
-def addOrUpdateQuestion(conn, q):
-  c = conn.cursor()
-  c.execute('''
-    INSERT INTO questions (questionId, question, optionA, optionB, priority createdAt)
-    VALUES (?, ?, ?, ?, ?, ?)''', (q._id, q.text, q.optionA, q.optionB, q.priority, q.createdAt))
-  conn.commit()
+# def getAllQuestions(conn):
+#   c = conn.cursor()
+#   c.execute('''
+#       SELECT * FROM questions 
+#       ''')
+#   questions = c.fetchall()
+#   return map(Question.fromSql, question)
 
-def addAnswer(conn, questionId, answer):
-  now = _ctime()
-  c = conn.cursor()
-  c.execute(
-      '''INSERT INTO answers (questionId, answer, createdAt) VALUES (?, ?, ?)''',
-      (questionId, answer, now))
-  conn.commit()
-  logging.info("{now!s}: added new answer: {questionId!s} {answer!s}".format(**locals()))
+# def _toAnswerDict(ansArr):
+#   return { 'questionId': ansArr[1], 'answer': ansArr[2], 'createdAt': ansArr[3] }
 
-def syncAnswers(conn):
-  c = conn.cursor()
-  c.execute('''
-      SELECT * FROM answers
-      WHERE savedToServer == 0
-      ORDER BY createdAt
-      LIMIT 50
-      ''')
-  answers = c.fetchall()
-  apiclient.postAnswers(map(_toAnswerDict, answers))
-
-def getAllQuestions(conn):
-  c = conn.cursor()
-  c.execute('''
-      SELECT * FROM questions 
-      ''')
-  questions = c.fetchall()
-  return map(Question.fromSql, question)
-
-def _toAnswerDict(ansArr):
-  return { 'questionId': ansArr[1], 'answer': ansArr[2], 'createdAt': ansArr[3] }
-
-if __name__ == "__main__":
-  conn = sqlite3.connect('vwyf.db')
-  init(conn)
-  conn.close()
+# if __name__ == "__main__":
+#   conn = sqlite3.connect('vwyf.db')
+#   init(conn)
+#   conn.close()

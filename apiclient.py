@@ -2,7 +2,7 @@ import requests
 import json
 import logging
 
-from models import Question
+from localstore import *
 
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
