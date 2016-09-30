@@ -4,10 +4,35 @@ import sqlite3
 import bson
 import time
 import logging
-import apiclient
-from models import Question
-
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
+
+import apiclient
+# from models import Question
+from sqlobject import *
+
+
+sqlhub.processConnection = connectionForURI('sqlite:/vwyf.db')
+
+class Question(SQLObject):
+  questionId = StringCol()
+  question = StringCol()
+  optionA = StringCol()
+  optionB = StringCol()
+  createdAt = StringCol()
+  priority = IntCol()
+
+class Answer(SQLObject):
+  questionId = StringCol()
+  answer = StringCol()
+  createdAt = StringCol()
+  savedToServer = BoolCol()
+
+class QuestionLog(SQLObject):
+  questionId = StringCol()
+  timestamp = StringCol()
+
+# Question(questionId='my-q-id', question='how are you?', optionA='great', optionB='ok', priority=3)
+
 
 def _ctime():
   return str(int(time.time() * 1000))
@@ -16,26 +41,10 @@ def init(conn):
   _createTable(conn)
 
 def _createTable(conn):
-  logging.info("Initializing SQLite Table..")
-  c = conn.cursor()
-  c.execute('''
-      CREATE TABLE IF NOT EXISTS questions (
-        questionId TEXT UNIQUE,
-        question TEXT,
-        optionA TEXT,
-        optionB TEXT,
-        priority INTEGER,
-        timesUsed INTEGER DEFAULT 0
-      )''')
-  c.execute('''
-      CREATE TABLE IF NOT EXISTS answers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        questionId TEXT,
-        answer TEXT, 
-        createdAt TEXT,
-        savedToServer INTEGER DEFAULT 0
-      )''')
-  conn.commit()
+  logging.info("Initializing SQLite Tables..")
+  Question.createTable(ifNotExists=True)
+  Answer.createTable(ifNotExists=True)
+  QuestionLog.createTable(ifNotExists=True)
 
 def addOrUpdateQuestion(conn, q):
   c = conn.cursor()
