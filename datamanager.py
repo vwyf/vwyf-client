@@ -21,3 +21,14 @@ class DataManager:
 
   def log(questionId):
     logQuestion(questionId)
+
+  def sync_questions_with_server():
+    (fetched, questions) = apiclient.get_questions()
+
+    if (fetched):
+      localstore.sync_local_questions(questions);
+
+  def save_answers_to_server():
+    answers_to_save = localstore.get_unsaved_answers()
+    if (apiclient.post_answers(answers_to_save)):
+      localstore.update_saved_answers(answers_to_save)

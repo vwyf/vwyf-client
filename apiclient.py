@@ -2,7 +2,8 @@ import requests
 import json
 import logging
 
-from localstore import *
+from models import Session, Question, Answer 
+import localstore
 
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
@@ -13,12 +14,12 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 # ];
 
 baseUrl = 'http://localhost:3000'
-questionsUrl = baseUrl + '/questions'
-answersUrl = baseUrl + '/answers'
+questions_url = base_url + '/questions'
+answers_url = base_url + '/answers'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
-def postAnswers(answers):
-  requests.post(url, data=json.dumps(answers), headers=headers)
+def post_answers(answers):
+  requests.post(answers_url, data=json.dumps(answers), headers=headers)
 
 # JSON response format:
 # [{u'_id': u'yQmghShgFbbFE4Zgg',
@@ -27,7 +28,13 @@ def postAnswers(answers):
 #   u'optionB': u'No',
 #   u'priority': 3,
 #   u'text': u'Are you happy?'}]
-def getQuestions():
-  r = requests.post(questionsUrl)
+
+def get_questions():
+  r = requests.post(questions_url)
+  if (r.status_code != 200):
+    logging('REQUEST FAILD in synclocalquestions failed')
+    return (False, []) # request failed
+
   parsed_json = json.loads(r.content)
-  return parsed_json
+  questions = map(lambda json: Question.from_json(json), parsed_json)
+  return (True, questions)

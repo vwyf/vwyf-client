@@ -12,15 +12,26 @@ engine = create_engine('sqlite:///vwyf.db', echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
+# q = Question(id='my-q-id', question='how are you?', option_a='great', option_b='ok', priority=3, created_at='12312312312321')
+
 class Question(Base):
   __tablename__ = 'questions'
-
   id = Column(String, primary_key=True)
   question = Column(String)
   option_a = Column(String)
   option_b = Column(String)
   created_at = Column(String)
   priority = Column(Integer)
+
+  @classmethod
+  def from_json(cls, json):
+    return cls(
+        id=json['_id'],
+        question=json['text'],
+        option_a=json['optionA'],
+        option_b=json['optionB'],
+        priority=json['priority'],
+        created_at=json['createdAt'])
 
 class Answer(Base):
   __tablename__ = 'answers'
@@ -39,33 +50,3 @@ class QuestionLog(Base):
   timestamp = Column(String)
 
 Base.metadata.create_all(engine)
-
-# class Question:
-#   def __init__(self, _id, text, optionA, optionB, priority, createdAt):
-#     self._id = _id
-#     self.text = text
-#     self.optionA = optionA
-#     self.optionB = optionB
-#     self.priority = priority
-#     self.createdAt = createdAt
-
-#   @classmethod
-#   def fromJson(cls, json):
-#     return cls(
-#         json['_id'],
-#         json['text'],
-#         json['optionA'],
-#         json['optionB'],
-#         json['priority'],
-#         json['createdAt'])
-
-#   @classmethod
-#   def fromSql(cls, questionArr):
-#     return cls(
-#         questionArr[0],
-#         questionArr[1],
-#         questionArr[2],
-#         questionArr[3],
-#         questionArr[4],
-#         questionArr[5],
-#         questionArr[6])
