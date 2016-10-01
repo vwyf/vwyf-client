@@ -1,4 +1,5 @@
 import logging
+
 import apiclient
 from localstore import *
 
@@ -14,14 +15,12 @@ class DataManager:
     # stop syncing questions/answers with server
 
   def getNextQuestion():
+    # select logs
     return 1
 
   def vote(self, questionId, isVoteA):
     answer = 'A' if isVoteA else 'B'
-    localstore.addAnswer(self.conn, questionId, answer)
+    Answer.add(questionId, answer)
 
   def log(questionId):
-    session = Session()
-    log = QuestionLog(questionId=questionId, timestamp=utils.ctime())
-    session.add(log)
-    session.commit()
+    QuestionLog.log(questionId)

@@ -1,26 +1,23 @@
-# for caching questions and answers results
-import sqlite3
-# part of pymongo library, used for generating mongo objectId on client side
-import bson
 import logging
-logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
-import apiclient
-
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 import utils
+import apiclient
 
+# log config
+logging.basicConfig(filename='vwyf.log',level=logging.INFO)
+
+# sql alchemy config
 engine = create_engine('sqlite:///vwyf.db', echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
-# Session = sessionmaker()
-# Session.configure(bind=engine)
 
 class Question(Base):
   __tablename__ = 'questions'
+
   id = Column(String, primary_key=True)
   question = Column(String)
   option_a = Column(String)
@@ -48,18 +45,33 @@ class Question(Base):
 
 class Answer(Base):
   __tablename__ = 'answers'
-  id = Column(integer, primary_key=True)
-  questionId = Column(String)
+
+  id = Column(Integer, primary_key=True)
+  questionId = Column(String, index=True)
   answer = Column(String)
   created_at = Column(String)
-  saved_to_server = Column(BOOLEAN)
+  saved_to_server = Column(Boolean)
+
+  @staticmethod
+  def add(questionId, answer):
+    session.Session()
+    answer = Answer(questionId = questionId, timestamp = util.ctime())
+    session.add(answer)
+    session.commit()
 
 class QuestionLog(Base):
   __tablename__ = 'question_logs'
-  id = Column(integer, primary_key=True)
-  questionId = Column(String)
-  timestamp = StringCol()
-  
+
+  id = Column(Integer, primary_key=True)
+  questionId = Column(String, index=True)
+  timestamp = Column(String)
+
+  @staticmethod
+  def log(questionId):
+    session.Session()
+    log = QuestionLog(questionId=questionId, timestamp=util.ctime())
+    session.add(log)
+    session.commit()
 
 # Question(questionId='my-q-id', question='how are you?', optionA='great', optionB='ok', priority=3)
 
