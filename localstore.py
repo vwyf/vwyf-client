@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy import func
 
-import time
+import utils
 import apiclient
 from models import Session, Question, Answer, QuestionLog
 
@@ -13,7 +13,7 @@ def add_answer(question_id, answer):
   answer = Answer(
       question_id = question_id,
       answer=answer,
-      created_at = time.ctime())
+      created_at = utils.ctime())
   session.add(answer)
   session.commit()
 
@@ -23,7 +23,7 @@ def log_question(question_id):
   session = Session()
   log = QuestionLog(
       question_id=question_id,
-      timestamp=time.ctime())
+      timestamp=utils.ctime())
   session.add(log)
   session.commit()
 
