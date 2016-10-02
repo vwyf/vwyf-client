@@ -1,4 +1,5 @@
 import logging
+from sqlalchemy import func
 
 import time
 import apiclient
@@ -17,6 +18,7 @@ def add_answer(question_id, answer):
   session.commit()
 
 # log means question currently being displayed
+# If application is healthy, this should be called every one minute
 def log_question(question_id):
   session = Session()
   log = QuestionLog(
@@ -69,6 +71,30 @@ def save_answers_to_server(post):
 
     session.commit()
 
+# Returning a dictionary containing (question_id -> # of logs)
+# e.g. {u'wM7MC2EJHAAtHk9ms': 105, u'yxmb4H2KJsGxvpKKD': 328}
+def _get_question_logs_map(session = Session()):
+  question_id_count_pairs = session.query(
+      QuestionLog.question_id, func.count(QuestionLog.id)).\
+      group_by(QuestionLog.question_id).\
+      all()
+  return dict(question_id_count_pairs)
+
+
+# priority: urgent: 0, hight: 1, medium: 2, low: 3
 def get_next_question():
-  #wip
   session = Session()
+  all_questions = session.query(Question).all()
+
+  if (len(all_questions) <= 0):
+    logging.error('Question list is empty.')
+    return
+
+  question_logs_map = _get_question_logs_map(session)
+
+  def getKey(q):
+    num_of_logs = question_logs_map.get(q.id, 0)
+    return (num_of_logs + 1) * (q.priority + 3)
+  
+  return sorted(all_questions, key=getKey)[0]
+

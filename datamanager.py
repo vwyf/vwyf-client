@@ -12,15 +12,14 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 #     # start syncing questions/answers with server
 
 def getNextQuestion():
-  # select logs
-  return 1
+  return localstore.get_next_question()
 
 def vote(self, question_id, isVoteA):
   answer = 'A' if isVoteA else 'B'
   localstore.addAnswer(question_id, answer)
 
 def log(question_id):
-  logQuestion(question_id)
+  localstore.log_question(question_id)
 
 # blocking network call
 def sync_questions_with_server():
