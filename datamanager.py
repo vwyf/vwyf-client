@@ -6,29 +6,29 @@ import localstore
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
 # interface for flipdot daemon
-class DataManager:
-  def __init__(self):
-    logging.info('initializing DataManager')
-    # start syncing questions/answers with server
+# class DataManager:
+#   def __init__(self):
+#     logging.info('initializing DataManager')
+#     # start syncing questions/answers with server
 
-  def getNextQuestion():
-    # select logs
-    return 1
+def getNextQuestion():
+  # select logs
+  return 1
 
-  def vote(self, questionId, isVoteA):
-    answer = 'A' if isVoteA else 'B'
-    localstore.addAnswer(questionId, answer)
+def vote(self, question_id, isVoteA):
+  answer = 'A' if isVoteA else 'B'
+  localstore.addAnswer(question_id, answer)
 
-  def log(questionId):
-    logQuestion(questionId)
+def log(question_id):
+  logQuestion(question_id)
 
-  def sync_questions_with_server():
-    (fetched, questions) = apiclient.get_questions()
+# blocking network call
+def sync_questions_with_server():
+  (fetched, questions) = apiclient.get_questions()
 
-    if (fetched):
-      localstore.sync_local_questions(questions);
+  if (fetched):
+    localstore.sync_local_questions(questions);
 
-  def save_answers_to_server():
-    answers_to_save = localstore.get_unsaved_answers()
-    if (apiclient.post_answers(answers_to_save)):
-      localstore.update_saved_answers(answers_to_save)
+# blocking network call
+def save_answers_to_server():
+  localstore.save_answers_to_server(apiclient.post_answers)

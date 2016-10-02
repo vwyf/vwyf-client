@@ -13,13 +13,15 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 #   {'questionId': 'v3umMe2QdAa6HngJ6', 'answer': 'B', 'createdAt': 1474516761283 }
 # ];
 
-baseUrl = 'http://localhost:3000'
+base_url = 'http://localhost:3000'
 questions_url = base_url + '/questions'
 answers_url = base_url + '/answers'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 def post_answers(answers):
-  requests.post(answers_url, data=json.dumps(answers), headers=headers)
+  json_data = json.dumps(map(lambda a: a.to_json(), answers))
+  r = requests.post(answers_url, data=json_data, headers=headers)
+  return True if (r.status_code == 200) else False
 
 # JSON response format:
 # [{u'_id': u'yQmghShgFbbFE4Zgg',

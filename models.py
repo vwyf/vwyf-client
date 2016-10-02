@@ -37,16 +37,23 @@ class Answer(Base):
   __tablename__ = 'answers'
 
   id = Column(Integer, primary_key=True)
-  questionId = Column(String, index=True)
+  question_id = Column(String, index=True)
   answer = Column(String)
   created_at = Column(String)
-  saved_to_server = Column(Boolean)
+  saved_to_server = Column(Boolean, default=0)
+
+  def to_json(self):
+    return {
+        'questionId': self.question_id,
+        'answer': self.answer,
+        'createdAt': self.created_at
+        }
 
 class QuestionLog(Base):
   __tablename__ = 'question_logs'
 
   id = Column(Integer, primary_key=True)
-  questionId = Column(String, index=True)
+  question_id = Column(String, index=True)
   timestamp = Column(String)
 
 Base.metadata.create_all(engine)
