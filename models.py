@@ -22,6 +22,8 @@ class Question(Base):
   option_b = Column(String)
   created_at = Column(String)
   priority = Column(Integer)
+  count_a = Column(Integer)
+  count_b = Column(Integer)
 
   @classmethod
   def from_json(cls, json):
@@ -31,7 +33,9 @@ class Question(Base):
         option_a=json['optionA'],
         option_b=json['optionB'],
         priority=json['priority'],
-        created_at=json['createdAt'])
+        created_at=json['createdAt'],
+        count_a=json['count']['A'],
+        count_b=json['count']['B'])
 
 class Answer(Base):
   __tablename__ = 'answers'

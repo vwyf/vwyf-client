@@ -45,6 +45,8 @@ def update_local_questions(remote_questions):
       local_question.option_b = q.option_b
       local_question.priority = q.priority
       local_question.created_at = q.created_at
+      local_question.count_a = q.count_a
+      local_question.count_b = q.count_b
     else:
       session.add(q)
 
