@@ -13,7 +13,8 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 #   {'questionId': 'v3umMe2QdAa6HngJ6', 'answer': 'B', 'createdAt': 1474516761283 }
 # ];
 
-base_url = 'http://localhost:3000'
+base_url = 'http://138.68.46.208'
+# base_url = 'http://localhost:3000'
 questions_url = base_url + '/questions'
 answers_url = base_url + '/answers'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
