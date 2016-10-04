@@ -19,9 +19,13 @@ answers_url = base_url + '/answers'
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 def post_answers(answers):
-  json_data = json.dumps(map(lambda a: a.to_json(), answers))
-  r = requests.post(answers_url, data=json_data, headers=headers)
-  return True if (r.status_code == 200) else False
+  try:
+    json_data = json.dumps(map(lambda a: a.to_json(), answers))
+    r = requests.post(answers_url, data=json_data, headers=headers)
+    return True if (r.status_code == 200) else False
+  except:
+    return False
+
 
 # JSON response format:
 # [{u'_id': u'yQmghShgFbbFE4Zgg',
@@ -30,13 +34,15 @@ def post_answers(answers):
 #   u'optionB': u'No',
 #   u'priority': 3,
 #   u'text': u'Are you happy?'}]
-
 def get_questions():
-  r = requests.post(questions_url)
-  if (r.status_code != 200):
-    logging('REQUEST FAILD in synclocalquestions failed')
-    return (False, []) # request failed
+  try:
+    r = requests.post(questions_url)
+    if (r.status_code != 200):
+      logging('REQUEST FAILD in synclocalquestions failed')
+      return (False, []) # request failed
 
-  parsed_json = json.loads(r.content)
-  questions = map(lambda json: Question.from_json(json), parsed_json)
-  return (True, questions)
+    parsed_json = json.loads(r.content)
+    questions = map(lambda json: Question.from_json(json), parsed_json)
+    return (True, questions)
+  except:
+    return (False, []) # request failed

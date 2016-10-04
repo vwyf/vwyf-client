@@ -70,6 +70,9 @@ def save_answers_to_server(post):
       ans.saved_to_server = 1
 
     session.commit()
+    return True
+
+  return False
 
 # Returning a dictionary containing (question_id -> # of logs)
 # e.g. {u'wM7MC2EJHAAtHk9ms': 105, u'yxmb4H2KJsGxvpKKD': 328}

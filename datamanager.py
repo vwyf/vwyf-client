@@ -23,6 +23,8 @@ def sync_questions_with_server():
   if (fetched):
     localstore.update_local_questions(questions);
 
+  return fetched
+
 # blocking network call
 def save_answers_to_server():
-  localstore.save_answers_to_server(apiclient.post_answers)
+  return localstore.save_answers_to_server(apiclient.post_answers)
