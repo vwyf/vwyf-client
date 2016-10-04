@@ -44,7 +44,6 @@ class Answer(Base):
   question_id = Column(String, index=True)
   answer = Column(String)
   created_at = Column(String)
-  saved_to_server = Column(Boolean, default=0)
 
   def to_json(self):
     return {

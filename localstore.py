@@ -61,15 +61,12 @@ def save_answers_to_server(post):
   session = Session()
 
   # pull 50 unsaved answers from local db
-  recent_unsaved_answers = session.query(Answer).\
-      filter(Answer.saved_to_server == 0).\
-      limit(50).\
-      all()
+  recent_unsaved_answers = session.query(Answer).limit(50).all()
 
   # post answers to server and set saved flag when post succeeded
   if (len(recent_unsaved_answers) > 0 and post(recent_unsaved_answers)):
     for ans in recent_unsaved_answers:
-      ans.saved_to_server = 1
+      session.delete(ans)
 
     session.commit()
     return True
