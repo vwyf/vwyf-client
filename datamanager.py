@@ -6,11 +6,6 @@ import localstore
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
 # interface for flipdot daemon
-# class DataManager:
-#   def __init__(self):
-#     logging.info('initializing DataManager')
-#     # start syncing questions/answers with server
-
 def getNextQuestion():
   return localstore.get_next_question()
 
