@@ -27,14 +27,14 @@ def log_question(question_id):
   session.add(log)
   session.commit()
 
-def _get_questions_map(questions):
+def _get_questions_id_map(questions):
   return dict(map(lambda q: (q.id, q), questions))
 
 def update_local_questions(remote_questions):
   session = Session()
   local_questions = session.query(Question).all()
-  local_questions_map = _get_questions_map(local_questions)
-  remote_questions_map = _get_questions_map(remote_questions)
+  local_questions_map = _get_questions_id_map(local_questions)
+  remote_questions_map = _get_questions_id_map(remote_questions)
 
   # insert or update questions
   for q in remote_questions:
