@@ -58,10 +58,10 @@ def update_local_questions(remote_questions):
 def save_answers_to_server(post):
   session = Session()
 
-  # pull 30 unsaved answers from local db
+  # pull 50 unsaved answers from local db
   recent_unsaved_answers = session.query(Answer).\
       filter(Answer.saved_to_server == 0).\
-      limit(40).\
+      limit(50).\
       all()
 
   # post answers to server and set saved flag when post succeeded
