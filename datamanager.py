@@ -7,13 +7,14 @@ logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
 # interface for flipdot daemon
 def get_next_question():
-  return localstore.get_next_question()
+  q = localstore.get_next_question()
+  return q.id, q.question, q.option_a, q.option_b
 
-def vote(question_id, isVoteA):
+def log_vote(question_id, isVoteA):
   answer = 'A' if isVoteA else 'B'
   localstore.add_answer(question_id, answer)
 
-def log(question_id):
+def log_question(question_id):
   localstore.log_question(question_id)
 
 # blocking network call
