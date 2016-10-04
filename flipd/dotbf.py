@@ -8,13 +8,13 @@ class Dotbf:
     def __init__(self, wdth=28, hght=7, txt=None, fnt=XU):
 
         if txt is not None:
-            a = self._txtarray(txt, font)
+            a = self._txtarray(txt, fnt)
 
             self.wdth = len(a)
             self.hght = 7
             self._b = np.zeros((self.hght, self.wdth), dtype=np.bool)
-            for x in range(wdth):
-                for y in range(hght):
+            for x in range(self.wdth):
+                for y in range(self.hght):
                     self._b[y, x] = a[x] & (0x1 << y)
 
         else:
@@ -62,9 +62,9 @@ class Dotbf:
     def _txtarray(self, txt, fnt):
         
         a = bytearray([0])
-        for c in txt:
-            if c in font:
-                a.extend(font[c])
+        for c in txt.upper():
+            if c in fnt:
+                a.extend(fnt[c])
                 a.append(0)
 
         return a

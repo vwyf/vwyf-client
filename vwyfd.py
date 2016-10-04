@@ -28,7 +28,7 @@ lsthb = None # last heartbeat
 qid = None
 
 with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
-    with serial.Serial("/dev/ttyUSB1", 57600, timeout=0.01) as brk_srl:
+    with serial.Serial("/dev/ttyACM0", 57600, timeout=0.01) as brk_srl:
 
         dbi.sync_questions_with_server() # download questions
 
@@ -36,12 +36,14 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
         
         # init question
         qid, q, a, b = dbi.get_next_question()
+	print("asking first:", q, a, b)
+
         qd.ask(q, a, b)
 
-        qd.wipe(srl, True) # wipe displays all white on startup
+        qd.wipe(dsply_srl, True) # wipe displays all white on startup
         time.sleep(0.5)
 
-        qd.wipe(srl, False) # wipe displays all black
+        qd.wipe(dsply_srl, False) # wipe displays all black
         time.sleep(0.5)
 
         while True:
@@ -68,5 +70,5 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
 
             if now - lststp > STPSPAN:
                 lststp = now
-                qd.step(srl)
+                qd.step(dsply_srl)
 

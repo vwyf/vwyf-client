@@ -1,10 +1,9 @@
 from __future__ import division
-from enum import Enum
 
 from flipd.dsply import Dsply
 from flipd.dotbf import Dotbf
 
-class Qst(Enum): # question state
+class Qst: # question state
     qscroll = 1
     postqpause = 2
     vscroll = 3
@@ -15,7 +14,7 @@ class Qst(Enum): # question state
 
 class Qdsply:
 
-    def __init__():
+    def __init__(self):
 
         # left & right displays
         self.lftd = Dsply([1, 2, 3, 4])
