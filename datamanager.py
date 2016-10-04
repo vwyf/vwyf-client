@@ -21,7 +21,7 @@ def sync_questions_with_server():
   (fetched, questions) = apiclient.get_questions()
 
   if (fetched):
-    localstore.sync_local_questions(questions);
+    localstore.update_local_questions(questions);
 
 # blocking network call
 def save_answers_to_server():
