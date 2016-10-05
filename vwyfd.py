@@ -29,8 +29,8 @@ qid = None
 
 with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
     with serial.Serial("/dev/ttyACM0", 57600, timeout=0.01) as brk_srl:
-
-        dbi.sync_questions_with_server() # download questions
+        # start data daemon for syncing questions and votes with server
+        dbi.start_data_daemon()
 
         lststp = lstnwq = lsthb = milli() # init timestamps
         
@@ -59,14 +59,12 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
 
             if now - lstnwq > QSPAN:
                 lstnwq = now
-                dbi.sync_questions_with_server() # download questions
                 qid, q, a, b = dbi.get_next_question()
                 qd.ask(q, a, b)
 
             if now - lsthb > HBSPAN:
                 lsthb = now
                 dbi.log_question(qid)
-                dbi.save_answers_to_server()
 
             if now - lststp > STPSPAN:
                 lststp = now
