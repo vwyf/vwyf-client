@@ -1,4 +1,6 @@
 import logging
+import threading
+import time
 
 import apiclient
 import localstore
@@ -18,14 +20,35 @@ def log_question(question_id):
   localstore.log_question(question_id)
 
 # blocking network call
-def sync_questions_with_server():
+def _sync_questions_with_server():
+  logging.info('fetching questions')
   (fetched, questions) = apiclient.get_questions()
 
+  logging.info('fetched questions' + str(fetched))
   if (fetched):
+    logging.info('updating questions')
     localstore.update_local_questions(questions);
 
   return fetched
 
 # blocking network call
-def save_answers_to_server():
+def _save_answers_to_server():
   return localstore.save_answers_to_server(apiclient.post_answers)
+
+def _data_daemon_worker():
+  num_of_loops = 0
+  while True:
+    num_of_loops += 1
+    try:
+      logging.info("running data daemon loop: " + str(num_of_loops))
+      _sync_questions_with_server()
+      _save_answers_to_server()
+      time.sleep(180)
+    except:
+      logging.error("data daemon loop failed at: " + str(num_of_loops))
+      time.sleep(300)
+
+def start_data_daemon():
+  data_daemon = threading.Thread(target=_data_daemon_worker)
+  data_daemon.daemon = True
+  data_daemon.start()
