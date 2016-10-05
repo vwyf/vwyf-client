@@ -137,13 +137,13 @@ class Qdsply:
         llst = int(self.lftd.wdth * self.rtio)
         print("render ratio:", llst, ":", self.lftd.wdth)
         for x in range(self.lftd.wdth):
-            on = (x < llst)
+            on = x < llst
             for y in range(self.lftd.hght):
                 self.lftrtiobf[x, y] = on
 
-        rlst = int(self.rtd.wdth * self.rtio)
+        rlst = self.rtd.wdth - int(self.rtd.wdth * self.rtio)
         for x in range(self.rtd.wdth):
-            on = (x >= rlst)
+            on = x >= rlst
             for y in range(self.rtd.hght):
                 self.rtrtiobf[x, y] = on
 
