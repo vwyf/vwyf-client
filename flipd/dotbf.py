@@ -66,5 +66,6 @@ class Dotbf:
             if c in fnt:
                 a.extend(fnt[c])
                 a.append(0)
-
+            else:
+                print("dotbf ignoring:", c)
         return a
