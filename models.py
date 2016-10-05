@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
 # sql alchemy config
-engine = create_engine('sqlite:///vwyf.db', echo=False)
+engine = create_engine('sqlite:///vwyf.db', echo=False, connect_args={'check_same_thread': False})
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 

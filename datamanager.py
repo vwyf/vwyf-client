@@ -49,6 +49,10 @@ def _data_daemon_worker():
       logging.error("data daemon loop failed at: " + str(num_of_loops))
       time.sleep(300)
 
+# Note that we set 'check_same_thread' to false for sqlalchemy To avoid potential
+# concurrency issue with SQLite:
+# 1) only the main thread can write to answers and question_logs table
+# 2) only the data daemon thread can write to questions table
 def start_data_daemon():
   data_daemon = threading.Thread(target=_data_daemon_worker)
   data_daemon.daemon = True
