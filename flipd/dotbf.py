@@ -42,9 +42,9 @@ class Dotbf:
         obf._b[oy:oy+hght, ox:ox+wdth] = self._b[y:y+hght, x:x+wdth]
 
     def writefrm(self, frm, x, y):
-        for i, nx in enumerate(range(x, x + frm.wdth)):
+        for i, nx in enumerate(range(x, x + frm.WDTH)):
             clmn = 0
-            for i, ny in enumerate(range(y, y + frm.hght)):
+            for j, ny in enumerate(range(y, y + frm.HGHT)):
                 if self[nx, ny]:
                     clmn |= 0x1 << j
             frm[i] = clmn
