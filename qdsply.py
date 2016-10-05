@@ -80,9 +80,8 @@ class Qdsply:
                 self.qst = Qst.vscroll
             else:
                 self.qscroll -= 1
-                self.qbf.writebf(self.lftbgbf, self.qscroll, 0)
-                self.qbf.writebf(self.rtbgbf, self.qscroll, 0)
-
+                self.qbf.writebf(self.lftbgbf, 0, 0, self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+                self.qbf.writebf(self.rtbgbf, 0, 0, self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
             self.lftd.render(srl, self.lftbgbf, 0, 0)
             self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
@@ -161,8 +160,8 @@ class Qdsply:
             self.mxqscroll = self.qbf.wdth - self.lftd.wdth
 
         self.qscroll = self.mxqscroll
-        self.qbf.writebf(self.lftbgbf, self.qscroll, 0)
-        self.qbf.writebf(self.rtbgbf, self.qscroll, 0)
+        self.qbf.writebf(self.lftbgbf, 0, 0, self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+        self.qbf.writebf(self.rtbgbf, 0, 0, self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
 
         self.abf = Dotbf(txt=a)
         self.bbf = Dotbf(txt=b)

@@ -29,7 +29,7 @@ lsthb = None # last heartbeat
 qid = None
 
 with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
-    with serial.Serial("/dev/ttyACM0", 57600, timeout=0.01) as brk_srl:
+    with serial.Serial("/dev/ttyUSB1", 57600, timeout=0.01) as brk_srl:
         # start data daemon for syncing questions and votes with server
         dbi.start_data_daemon()
 
