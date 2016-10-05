@@ -9,13 +9,14 @@ def milli(): # integer time in milliseconds
 
 def checkbrk(srl): # check breakbeam
     brk = srl.read()
-    if brk == ord("a"):
+    #print("read serial:", brk)
+    if brk == "a":
         return True, True # gateway a break
-    if brk == ord("b"):
+    if brk == "b":
         return True, False # gateway b break
     return False, True # no break event
 
-STPSPAN = 100 # time between animation steps
+STPSPAN = 500 # time between animation steps
 QSPAN = 18 * 10**5 # (30 mins) time between questions
 HBSPAN = 6 * 10**4 # (1 min) time between heartbeats
 
@@ -51,7 +52,11 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
             # check breakbeam serial for votes
             has, a = checkbrk(brk_srl)
             if has:
+		print("got vote!", a)
                 ratio = dbi.log_vote(qid, a)
+                if ratio is None:
+                    print("log vote failed to return ratio!")
+                    ratio = 0.5
                 qd.vote(a, ratio)
 
             # do stuff when its time

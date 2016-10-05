@@ -75,8 +75,8 @@ class Qdsply:
                 return
 
             self.qscroll -= 1
-            self.lftd.render(srl, bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
             return
 
         if self.qst == Qst.vscroll:
@@ -86,8 +86,8 @@ class Qdsply:
                 return
 
             self.vscroll += 1
-            self.lftd.render(srl, bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
             return
         
         if self.qst == Qst.nvscroll:
@@ -96,8 +96,8 @@ class Qdsply:
                 return
 
             self.vscroll -= 1
-            self.lftd.render(srl, bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
             return                      
 
 
@@ -152,6 +152,8 @@ class Qdsply:
 
         self.abf = Dotbf(txt=a)
         self.bbf = Dotbf(txt=b)
+        
+        self.qst = Qst.qscroll # start scrolling!
 
     def vote(self, a, ratio, dpth=10): # a -> bool, true if vote is for a
         """add depth to a or b vote buzzer"""
