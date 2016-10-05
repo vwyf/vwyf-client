@@ -26,7 +26,8 @@ class Qdsply:
         self.rtbf = Dotbf(self.rtd.wdth, self.rtd.hght)
         self.abf = None
         self.bbf = None
-        self.bgbf = Dotbf(self.lftd.wdth, self.lftd.hght * 2)
+        self.lftbgbf = Dotbf(self.lftd.wdth, self.lftd.hght * 2)
+        self.rtbgbf = Dotbf(self.rtd.wdth, self.rtd.hght * 2)
         self.lftrtiobf = Dotbf(self.lftd.wdth, self.lftd.hght)
         self.rtrtiobf = Dotbf(self.rtd.wdth, self.rtd.hght)
 
@@ -61,11 +62,13 @@ class Qdsply:
             
             if self.adpth > 0:
                 self.adpth -= 1
-                self._buzza()
+                if self.adpth % 2:
+                    self._buzza()
 
             if self.bdpth > 0:
                 self.bdpth -= 1
-                self._buzzb()
+                if self.bdpth % 2:
+                    self._buzzb()
 
             self.lftd.render(srl, self.lftrtiobf)
             self.rtd.render(srl, self.rtrtiobf)
@@ -75,11 +78,13 @@ class Qdsply:
             print("qscroll", self.qscroll, )
             if self.qscroll == 0:
                 self.qst = Qst.vscroll
-                return
+            else:
+                self.qscroll -= 1
+                self.qbf.writebf(self.lftbgbf, self.qscroll, 0)
+                self.qbf.writebf(self.rtbgbf, self.qscroll, 0)
 
-            self.qscroll -= 1
-            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.lftbgbf, 0, 0)
+            self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
 
         if self.qst == Qst.vscroll:
@@ -90,8 +95,8 @@ class Qdsply:
                 return
 
             self.vscroll += 1
-            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.lftbgbf, 0, self.vscroll)
+            self.rtd.render(srl, self.rtbgbf, 0, self.vscroll)
             return
         
         if self.qst == Qst.nvscroll:
@@ -101,64 +106,78 @@ class Qdsply:
                 return
 
             self.vscroll -= 1
-            self.lftd.render(srl, self.bgbf, self.qscroll, self.vscroll)
-            self.rtd.render(srl, self.bgbf, self.qscroll, self.vscroll)
+            self.lftd.render(srl, self.lftbgbf, 0, self.vscroll)
+            self.rtd.render(srl, self.rtbgbf, 0, self.vscroll)
             return                      
 
 
     def _buzza(self):
         aw = self.abf.wdth
-        ldw = self.lftd.wdth
-        lap = ((ldw // 2) - aw) // 2
+        hlw = self.lftd.wdth // 2
+        lap = (hlw - aw) // 2
         self.abf.flipmask(self.lftrtiobf, lap, 0)
 
-        rdw = self.rtd.wdth
-        rap = (rdw // 2) + (((rdw // 2) - aw) // 2)
+        hrw = self.rtd.wdth // 2
+        rap = hrw + ((hrw - aw) // 2)
         self.abf.flipmask(self.rtrtiobf, rap, 0)
-        print("lap:", lap, "rap:", rap)
+        #print("lap:", lap, "rap:", rap)
 
     def _buzzb(self):
         bw = self.bbf.wdth
-        ldw = self.lftd.wdth
-        lbp = (ldw // 2) + (((ldw // 2) - bw) // 2)
+        hlw = self.lftd.wdth // 2
+        lbp = hlw + ((hlw - bw) // 2)
         self.bbf.flipmask(self.lftrtiobf, lbp, 0)
 
-        rdw = self.rtd.wdth
-        rbp = ((rdw // 2) - bw) // 2
+        hrw = self.rtd.wdth // 2
+        rbp = (hrw - bw) // 2
         self.bbf.flipmask(self.rtrtiobf, rbp, 0)
 
 
     def _render_ratio(self):
-        llst = self.lftd.wdth // self.rtio
-	print("render ratio:", llst, ":", self.lftd.wdth)
+        llst = int(self.lftd.wdth * self.rtio)
+        print("render ratio:", llst, ":", self.lftd.wdth)
         for x in range(self.lftd.wdth):
             on = (x < llst)
             for y in range(self.lftd.hght):
                 self.lftrtiobf[x, y] = on
 
-        rlst = self.rtd.wdth // self.rtio
-        for x in range(self.lftd.wdth):
-            on = (x >= llst)
-            for y in range(self.lftd.hght):
-                self.lftrtiobf[x, y] = on
+        rlst = int(self.rtd.wdth * self.rtio)
+        for x in range(self.rtd.wdth):
+            on = (x >= rlst)
+            for y in range(self.rtd.hght):
+                self.rtrtiobf[x, y] = on
 
 
     def ask(self, q, a, b):
         """ask new question"""
         qbf = Dotbf(txt=q)
         if qbf.wdth < self.lftd.wdth:
-            dlta = self.lftd.wdth - qbf.wdth
             self.qbf = Dotbf(self.lftd.wdth)
-            qbf.writebf(self.qbf, dlta // 2, 0)
+            dlta = (self.qbf.wdth - qbf.wdth) // 2
+            qbf.writebf(self.qbf, dlta, 0)
             self.mxqscroll = 0
         else:
             self.qbf = qbf
             self.mxqscroll = self.qbf.wdth - self.lftd.wdth
 
         self.qscroll = self.mxqscroll
+        self.qbf.writebf(self.lftbgbf, self.qscroll, 0)
+        self.qbf.writebf(self.rtbgbf, self.qscroll, 0)
 
         self.abf = Dotbf(txt=a)
         self.bbf = Dotbf(txt=b)
+
+        hld = self.lftd.wdth // 2
+        lap = (hld - self.abf.wdth) // 2
+        self.abf.writebf(self.lftbgbf, lap, self.lftd.hght)
+        lbp = hld + ((hld - self.bbf.wdth) // 2)
+        self.bbf.writebf(self.lftbgbf, lbp, self.lftd.hght)
+
+        hrd = self.rtd.wdth // 2
+        rap = hrd + ((hrd - self.abf.wdth) // 2)
+        self.abf.writebf(self.rtbgbf, rap, self.rtd.hght)
+        rbp = (hrd - self.bbf.wdth) // 2
+        self.bbf.writebf(self.rtbgbf, rbp, self.rtd.hght)
         
         self.qst = Qst.qscroll # start scrolling!
 

@@ -20,3 +20,15 @@ class Frm:
 
     def __setitem__(self, i, b):
         self.b[i+3] = b
+
+    def __str__(self):
+        s = ""
+        for x in range(3, 31):
+            c = ""
+            for y in range(7):
+                if self.b[x] & (0x1 << y):
+                    c = "o" + c
+                else:
+                    c = "." + c
+            s += c + "\n"
+        return s
