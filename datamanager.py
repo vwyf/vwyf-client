@@ -23,7 +23,7 @@ def log_question(question_id):
 # blocking network call
 def _sync_questions_with_server():
   logging.info('fetching questions')
-  (fetched, questions) = apiclient.get_questions()
+  fetched, questions = apiclient.get_questions()
 
   logging.info('fetched questions' + str(fetched))
   if (fetched):

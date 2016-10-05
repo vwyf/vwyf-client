@@ -40,10 +40,10 @@ def get_questions():
     r = requests.post(questions_url)
     if (r.status_code != 200):
       logging('REQUEST FAILD in synclocalquestions failed')
-      return (False, []) # request failed
+      return False, [] # request failed
 
     parsed_json = json.loads(r.content)
     questions = map(lambda json: Question.from_json(json), parsed_json)
-    return (True, questions)
+    return True, questions
   except:
-    return (False, []) # request failed
+    return False, [] # request failed
