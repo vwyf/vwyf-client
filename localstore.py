@@ -8,14 +8,31 @@ from models import Session, Question, Answer, QuestionLog
 # log config
 logging.basicConfig(filename='vwyf.log',level=logging.INFO)
 
+# maintain a local cache of all votes collected
+local_vote_counts_map = dict(map(
+  lambda q: (q.id, {'A': q.count_a, 'B': q.count_b}),
+  Session().query(Question).all()
+))
+
+def _get_ratio(question_id):
+  local_counts = local_vote_counts_map[question_id]
+
+  # smoothen the ratio when starting a new question
+  if (local_counts['A'] < 5 or local_counts['B'] < 5):
+    return (local_counts['A'] + 5) / float(local_counts['A'] + local_counts['B'] + 10)
+
+  return local_counts['A'] / float(local_counts['A'] + local_counts['B'])
+
 def add_answer(question_id, answer):
   session = Session()
-  answer = Answer(
+  answerObj = Answer(
       question_id = question_id,
       answer=answer,
       created_at = utils.ctime())
-  session.add(answer)
+  session.add(answerObj)
   session.commit()
+  local_vote_counts_map[question_id][answer] += 1
+  return _get_ratio(question_id)
 
 # log means question currently being displayed
 # If application is healthy, this should be called every one minute
