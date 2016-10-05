@@ -1,7 +1,10 @@
 import math
 import numpy as np
 
-from fnt import XU
+try:
+    from fnt import XU
+except:
+    from flipd.fnt import XU
 
 class Dotbf:
 
@@ -22,6 +25,18 @@ class Dotbf:
             self.hght = hght
             self._b = np.zeros((self.hght, self.wdth), dtype=np.bool)
 
+    def __str__(self):
+        s = ""
+        for x in range(self.wdth):
+            c = ""
+            for y in range(self.hght):
+                if self._b[y, x]:
+                    c = "o" + c
+                else:
+                    c = "." + c
+            s += c + "\n"
+        return s
+
     def __setitem__(self, dex, on):
         x, y = dex
         x %= self.wdth
@@ -34,7 +49,7 @@ class Dotbf:
         y %= self.hght
         return self._b[y, x]
 
-    def writebf(self, obf, ox, oy, x=0, y=0, wdth=-1, hght=-1):
+    def writebf(self, obf, ox=0, oy=0, x=0, y=0, wdth=-1, hght=-1):
         if wdth < 0:
             wdth = self.wdth
         if hght < 0:
@@ -57,7 +72,7 @@ class Dotbf:
         for u in range(x, x+wdth):
             for v in range(y, y+hght):
                 if self[u, v]:
-                    obf[u, v] = ~obf[u, v]        
+                    obf[ox+u, oy+v] = ~obf[ox+u, oy+v]        
 
     def _txtarray(self, txt, fnt):
         
