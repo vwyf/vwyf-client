@@ -14,8 +14,15 @@ local_vote_counts_map = dict(map(
   Session().query(Question).all()
 ))
 
-def _get_ratio(question_id):
+def _get_current_ratio(question_id, answer_to_add=None):
+  if (not local_vote_counts_map.get(question_id)):
+    logging.info("Inilizing new local counts for question: " + question_id)
+    local_vote_counts_map[question_id] = {'A': 0, 'B': 0}
+
   local_counts = local_vote_counts_map[question_id]
+
+  if (answer_to_add):
+    local_counts[answer_to_add] += 1
 
   # smoothen the ratio when starting a new question
   if (local_counts['A'] < 5 or local_counts['B'] < 5):
@@ -31,8 +38,7 @@ def add_answer(question_id, answer):
       created_at = utils.ctime())
   session.add(answerObj)
   session.commit()
-  local_vote_counts_map[question_id][answer] += 1
-  return _get_ratio(question_id)
+  return _get_current_ratio(question_id, answer)
 
 # log means question currently being displayed
 # If application is healthy, this should be called every one minute
