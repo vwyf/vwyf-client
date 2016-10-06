@@ -52,7 +52,7 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
             # check breakbeam serial for votes
             has, a = checkbrk(brk_srl)
             if has:
-            print("got vote!", a)
+                print("got vote!", a)
                 ratio = dbi.log_vote(qid, a)
                 if ratio is None:
                     print("log vote failed to return ratio!")

@@ -48,12 +48,10 @@ class Qdsply:
         """step animation forwards"""
 
         if self.qst == Qst.noq:
-            print("noq")
             self.wipe(srl, False)
             return
 
         if self.vst:
-            print("vst",)
             if self.adpth > 0 or self.bdpth > 0:
                 self._render_ratio()
             else:
@@ -73,7 +71,6 @@ class Qdsply:
             return
 
         if self.qst == Qst.qscroll:
-            print("qscroll", self.qscroll, )
             if self.qscroll == self.mxqscroll:
                 self.qst = Qst.vscroll
             else:
@@ -89,7 +86,6 @@ class Qdsply:
             return
 
         if self.qst == Qst.vscroll:
-            print("vscroll", self.vscroll,)
             if self.vscroll == self.mxvscroll:
                 self.qscroll = 0
                 self.qst = Qst.nvscroll
@@ -101,7 +97,6 @@ class Qdsply:
             return
         
         if self.qst == Qst.nvscroll:
-            print("nvscroll", self.vscroll,)
             if self.vscroll == 0:
                 self.qst = Qst.qscroll
                 return
