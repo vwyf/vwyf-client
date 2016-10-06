@@ -80,7 +80,7 @@ class Qdsply:
                 self.pause = self.mxpause
 
         if self.qst == Qst.qscroll:
-            if self.qscroll == self.mxqscroll:
+            if self.qscroll >= self.mxqscroll:
                 self.qst = Qst.postqpause
             else:
                 self.qscroll += 1
@@ -168,6 +168,11 @@ class Qdsply:
 
     def ask(self, q, a, b):
         """ask new question"""
+
+        # wipe old question
+        self.lftbgbf.wipe()
+        self.rtbgbf.wipe()
+
         qbf = Dotbf(txt=q)
         if qbf.wdth < self.lftd.wdth:
             self.qbf = Dotbf(self.lftd.wdth)
@@ -177,8 +182,9 @@ class Qdsply:
         else:
             self.qbf = qbf
             self.mxqscroll = self.qbf.wdth - self.lftd.wdth
+            print("mxqscroll:", self.mxqscroll)
 
-        self.qscroll = self.mxqscroll
+        self.qscroll = 0
         self.qbf.writebf(
             self.lftbgbf, 0, 0, 
             self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
@@ -186,16 +192,10 @@ class Qdsply:
             self.rtbgbf, 0, 0, 
             self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
 
-        self.abf = Dotbf(txt=a)
-        self.bbf = Dotbf(txt=b)
-
-        # if a or b are too wide dont show
-        if self.abf.wdth > self.lftd.wdth // 2:
-            self.abf = Dotbf(txt="?")
-        if self.bbf.wdth > self.lftd.wdth // 2:
-            self.bbf = Dotbf(txt="?")
-            
         hld = self.lftd.wdth // 2
+        self.abf = Dotbf(txt=a, txtmx=hld)
+        self.bbf = Dotbf(txt=b, txtmx=hld)
+
         lap = (hld - self.abf.wdth) // 2
         self.abf.writebf(self.lftbgbf, lap, self.lftd.hght)
         lbp = hld + ((hld - self.bbf.wdth) // 2)
@@ -207,7 +207,7 @@ class Qdsply:
         rbp = (hrd - self.bbf.wdth) // 2
         self.bbf.writebf(self.rtbgbf, rbp, self.rtd.hght)
         
-        self.qst = Qst.preqpause # start scrolling!
+        self.qst = Qst.qscroll # start scrolling!
 
     def vote(self, a, ratio, dpth=10): # a -> bool, true if vote is for a
         """add depth to a or b vote buzzer"""

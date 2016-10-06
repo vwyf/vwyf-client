@@ -8,12 +8,16 @@ except:
 
 class Dotbf:
 
-    def __init__(self, wdth=28, hght=7, txt=None, fnt=XU):
+    def __init__(self, wdth=28, hght=7, txt=None, txtmx=0, fnt=XU):
 
         if txt is not None:
             a = self._txtarray(txt, fnt)
 
-            self.wdth = len(a)
+            if txtmx > 0:
+                self.wdth = min(txtmx, len(a))
+            else:
+                self.wdth = len(a)
+
             self.hght = 7
             self._b = np.zeros((self.hght, self.wdth), dtype=np.bool)
             for x in range(self.wdth):
@@ -72,7 +76,10 @@ class Dotbf:
         for u in range(x, x+wdth):
             for v in range(y, y+hght):
                 if self[u, v]:
-                    obf[ox+u, oy+v] = ~obf[ox+u, oy+v]        
+                    obf[ox+u, oy+v] = ~obf[ox+u, oy+v]
+
+    def wipe(self):    
+        self._b = np.zeros((self.hght, self.wdth), dtype=np.bool)
 
     def _txtarray(self, txt, fnt):
         
