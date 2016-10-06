@@ -189,6 +189,12 @@ class Qdsply:
         self.abf = Dotbf(txt=a)
         self.bbf = Dotbf(txt=b)
 
+        # if a or b are too wide dont show
+        if self.abf.wdth > self.lftd.wdth // 2:
+            self.abf = Dotbf(txt="?")
+        if self.bbf.wdth > self.lftd.wdth // 2:
+            self.bbf = Dotbf(txt="?")
+            
         hld = self.lftd.wdth // 2
         lap = (hld - self.abf.wdth) // 2
         self.abf.writebf(self.lftbgbf, lap, self.lftd.hght)
