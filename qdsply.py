@@ -43,6 +43,8 @@ class Qdsply:
         self.mxqscroll = 0
         self.vscroll = 0
         self.mxvscroll = 7
+        self.pause = 5
+        self.mxpause = 5
 
     def step(self, srl):
         """step animation forwards"""
@@ -70,9 +72,16 @@ class Qdsply:
             self.rtd.render(srl, self.rtrtiobf)
             return
 
+        if self.qst == Qst.preqpause:
+            if self.pause > 0:
+                self.pause -= 1
+            else:
+                self.qst = Qst.qscroll
+                self.pause = self.mxpause
+
         if self.qst == Qst.qscroll:
             if self.qscroll == self.mxqscroll:
-                self.qst = Qst.vscroll
+                self.qst = Qst.postqpause
             else:
                 self.qscroll += 1
                 self.qbf.writebf(
@@ -85,20 +94,34 @@ class Qdsply:
             self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
 
+        if self.qst == Qst.postqpause:
+            if self.pause > 0:
+                self.pause -= 1
+            else:
+                self.qst = Qst.vscroll
+                self.pause = self.mxpause
+
         if self.qst == Qst.vscroll:
             if self.vscroll == self.mxvscroll:
                 self.qscroll = 0
-                self.qst = Qst.nvscroll
+                self.qst = Qst.vpause
                 return
 
             self.vscroll += 1
             self.lftd.render(srl, self.lftbgbf, 0, self.vscroll)
             self.rtd.render(srl, self.rtbgbf, 0, self.vscroll)
             return
+
+        if self.qst == Qst.vpause:
+            if self.pause > 0:
+                self.pause -= 1
+            else:
+                self.qst = Qst.nvscroll
+                self.pause = self.mxpause
         
         if self.qst == Qst.nvscroll:
             if self.vscroll == 0:
-                self.qst = Qst.qscroll
+                self.qst = Qst.postqpause
                 return
 
             self.vscroll -= 1
@@ -131,7 +154,6 @@ class Qdsply:
 
     def _render_ratio(self):
         llst = int(self.lftd.wdth * self.rtio)
-        print("render ratio:", llst, ":", self.lftd.wdth)
         for x in range(self.lftd.wdth):
             on = x < llst
             for y in range(self.lftd.hght):
@@ -179,7 +201,7 @@ class Qdsply:
         rbp = (hrd - self.bbf.wdth) // 2
         self.bbf.writebf(self.rtbgbf, rbp, self.rtd.hght)
         
-        self.qst = Qst.qscroll # start scrolling!
+        self.qst = Qst.preqpause # start scrolling!
 
     def vote(self, a, ratio, dpth=10): # a -> bool, true if vote is for a
         """add depth to a or b vote buzzer"""
