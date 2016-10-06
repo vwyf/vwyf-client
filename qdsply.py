@@ -106,7 +106,7 @@ class Qdsply:
 
         if self.qst == Qst.vscroll:
             if self.vscroll == self.mxvscroll:
-                self.qscroll = 0
+                self.qscroll = self.mxqscroll
                 self.qst = Qst.vpause
                 return
 
