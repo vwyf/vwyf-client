@@ -80,6 +80,7 @@ class Qdsply:
                 self.pause -= 1
             else:
                 self.qst = Qst.qscroll
+                self.qscroll = 0
                 self.pause = self.mxpause
 
         if self.qst == Qst.qscroll:
@@ -106,7 +107,7 @@ class Qdsply:
 
         if self.qst == Qst.vscroll:
             if self.vscroll == self.mxvscroll:
-                self.qscroll = self.mxqscroll
+                self.qscroll = 0
                 self.qst = Qst.vpause
                 return
 
