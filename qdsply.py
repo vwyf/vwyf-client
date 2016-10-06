@@ -43,8 +43,8 @@ class Qdsply:
         self.mxqscroll = 0
         self.vscroll = 0
         self.mxvscroll = 7
-        self.pause = 5
-        self.mxpause = 5
+        self.pause = 8
+        self.mxpause = 8
 
     def step(self, srl):
         """step animation forwards"""
