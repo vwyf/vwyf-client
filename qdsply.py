@@ -62,13 +62,11 @@ class Qdsply:
             
             if self.adpth > 0:
                 self.adpth -= 1
-                if self.adpth % 2:
-                    self._buzza()
+                self._buzza()
 
             if self.bdpth > 0:
                 self.bdpth -= 1
-                if self.bdpth % 2:
-                    self._buzzb()
+                self._buzzb()
 
             self.lftd.render(srl, self.lftrtiobf)
             self.rtd.render(srl, self.rtrtiobf)
@@ -76,12 +74,16 @@ class Qdsply:
 
         if self.qst == Qst.qscroll:
             print("qscroll", self.qscroll, )
-            if self.qscroll == 0:
+            if self.qscroll == self.mxqscroll:
                 self.qst = Qst.vscroll
             else:
-                self.qscroll -= 1
-                self.qbf.writebf(self.lftbgbf, 0, 0, self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-                self.qbf.writebf(self.rtbgbf, 0, 0, self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+                self.qscroll += 1
+                self.qbf.writebf(
+                    self.lftbgbf, 0, 0, 
+                    self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+                self.qbf.writebf(
+                    self.rtbgbf, 0, 0, 
+                    self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
             self.lftd.render(srl, self.lftbgbf, 0, 0)
             self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
@@ -89,7 +91,7 @@ class Qdsply:
         if self.qst == Qst.vscroll:
             print("vscroll", self.vscroll,)
             if self.vscroll == self.mxvscroll:
-                self.qscroll = self.mxqscroll
+                self.qscroll = 0
                 self.qst = Qst.nvscroll
                 return
 
@@ -160,8 +162,12 @@ class Qdsply:
             self.mxqscroll = self.qbf.wdth - self.lftd.wdth
 
         self.qscroll = self.mxqscroll
-        self.qbf.writebf(self.lftbgbf, 0, 0, self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-        self.qbf.writebf(self.rtbgbf, 0, 0, self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+        self.qbf.writebf(
+            self.lftbgbf, 0, 0, 
+            self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+        self.qbf.writebf(
+            self.rtbgbf, 0, 0, 
+            self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
 
         self.abf = Dotbf(txt=a)
         self.bbf = Dotbf(txt=b)

@@ -37,7 +37,7 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
         
         # init question
         qid, q, a, b = dbi.get_next_question()
-	print("asking first:", q, a, b)
+        print("asking first:", q, a, b)
 
         qd.ask(q, a, b)
 
@@ -52,7 +52,7 @@ with serial.Serial("/dev/ttyUSB0", 57600) as dsply_srl:
             # check breakbeam serial for votes
             has, a = checkbrk(brk_srl)
             if has:
-		print("got vote!", a)
+            print("got vote!", a)
                 ratio = dbi.log_vote(qid, a)
                 if ratio is None:
                     print("log vote failed to return ratio!")
