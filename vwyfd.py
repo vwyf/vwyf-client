@@ -16,7 +16,7 @@ def checkbrk(srl): # check breakbeam
         return True, False # gateway b break
     return False, True # no break event
 
-STPSPAN = 500 # time between animation steps
+STPSPAN = 100 # time between animation steps
 QSPAN = 18 * 10**5 # (30 mins) time between questions
 HBSPAN = 6 * 10**4 # (1 min) time between heartbeats
 
