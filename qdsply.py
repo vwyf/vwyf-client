@@ -58,6 +58,9 @@ class Qdsply:
                 self._render_ratio()
             else:
                 self.vst = False
+                self.qst = Qst.nvscroll
+                self.qscroll = 0
+                self.vscroll = self.mxvscroll
                 return
             
             if self.adpth > 0:
@@ -121,7 +124,7 @@ class Qdsply:
         
         if self.qst == Qst.nvscroll:
             if self.vscroll == 0:
-                self.qst = Qst.postqpause
+                self.qst = Qst.preqpause
                 return
 
             self.vscroll -= 1
