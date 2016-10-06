@@ -87,13 +87,14 @@ class Qdsply:
             if self.qscroll >= self.mxqscroll:
                 self.qst = Qst.postqpause
             else:
-                self.qscroll += 1
                 self.qbf.writebf(
                     self.lftbgbf, 0, 0, 
                     self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
                 self.qbf.writebf(
                     self.rtbgbf, 0, 0, 
                     self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+                self.qscroll += 1
+                
             self.lftd.render(srl, self.lftbgbf, 0, 0)
             self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
@@ -108,6 +109,12 @@ class Qdsply:
         if self.qst == Qst.vscroll:
             if self.vscroll == self.mxvscroll:
                 self.qscroll = 0
+                self.qbf.writebf(
+                    self.lftbgbf, 0, 0, 
+                    self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+                self.qbf.writebf(
+                    self.rtbgbf, 0, 0, 
+                    self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
                 self.qst = Qst.vpause
                 return
 
