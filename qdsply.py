@@ -59,8 +59,9 @@ class Qdsply:
             else:
                 self.vst = False
                 self.qst = Qst.nvscroll
-                self.qscroll = 0
                 self.vscroll = self.mxvscroll
+                self.qscroll = 0
+                self._writeq()
                 return
             
             if self.adpth > 0:
@@ -81,20 +82,16 @@ class Qdsply:
             else:
                 self.qst = Qst.qscroll
                 self.qscroll = 0
+                self._writeq()
                 self.pause = self.mxpause
 
         if self.qst == Qst.qscroll:
             if self.qscroll >= self.mxqscroll:
                 self.qst = Qst.postqpause
             else:
-                self.qbf.writebf(
-                    self.lftbgbf, 0, 0, 
-                    self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-                self.qbf.writebf(
-                    self.rtbgbf, 0, 0, 
-                    self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
                 self.qscroll += 1
-                
+                self._writeq()
+
             self.lftd.render(srl, self.lftbgbf, 0, 0)
             self.rtd.render(srl, self.rtbgbf, 0, 0)
             return
@@ -109,12 +106,7 @@ class Qdsply:
         if self.qst == Qst.vscroll:
             if self.vscroll == self.mxvscroll:
                 self.qscroll = 0
-                self.qbf.writebf(
-                    self.lftbgbf, 0, 0, 
-                    self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-                self.qbf.writebf(
-                    self.rtbgbf, 0, 0, 
-                    self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+                self._writeq()
                 self.qst = Qst.vpause
                 return
 
@@ -162,6 +154,13 @@ class Qdsply:
         rbp = (hrw - bw) // 2
         self.bbf.flipmask(self.rtrtiobf, rbp, 0)
 
+    def _writeq(self):
+        self.qbf.writebf(
+            self.lftbgbf, 0, 0, 
+            self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
+        self.qbf.writebf(
+            self.rtbgbf, 0, 0, 
+            self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
 
     def _render_ratio(self):
         llst = int(self.lftd.wdth * self.rtio)
@@ -196,12 +195,7 @@ class Qdsply:
             print("mxqscroll:", self.mxqscroll)
 
         self.qscroll = 0
-        self.qbf.writebf(
-            self.lftbgbf, 0, 0, 
-            self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-        self.qbf.writebf(
-            self.rtbgbf, 0, 0, 
-            self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+        self._writeq()
 
         hld = self.lftd.wdth // 2
         self.abf = Dotbf(txt=a, txtmx=hld)
