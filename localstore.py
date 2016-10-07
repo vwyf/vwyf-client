@@ -119,7 +119,7 @@ def get_next_question():
 
   def getKey(q):
     num_of_logs = question_logs_map.get(q.id, 0)
-    return (num_of_logs + 1) * (q.priority + 3)
+    return (num_of_logs + 1) * (10 ** q.priority)
   
   return sorted(all_questions, key=getKey)[0]
 
