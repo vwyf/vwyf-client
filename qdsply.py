@@ -21,7 +21,8 @@ class Qdsply:
         self.rtd = Dsply([5, 6, 7, 8])
 
         # buffers
-        self.qbf = None # question buffer
+        self.lqbf = None # left question buffer
+        self.rqbf = None
         self.lftbf = Dotbf(self.lftd.wdth, self.lftd.hght)
         self.rtbf = Dotbf(self.rtd.wdth, self.rtd.hght)
         self.abf = None
@@ -155,12 +156,12 @@ class Qdsply:
         self.bbf.flipmask(self.rtrtiobf, rbp, 0)
 
     def _writeq(self):
-        self.qbf.writebf(
+        self.lqbf.writebf(
             self.lftbgbf, 0, 0, 
-            self.qscroll, 0, self.lftbgbf.wdth, self.qbf.hght)
-        self.qbf.writebf(
+            self.qscroll, 0, self.lftbgbf.wdth, self.lqbf.hght)
+        self.rqbf.writebf(
             self.rtbgbf, 0, 0, 
-            self.qscroll, 0, self.rtbgbf.wdth, self.qbf.hght)
+            self.qscroll, 0, self.rtbgbf.wdth, self.rqbf.hght)
 
     def _render_ratio(self):
         llst = int(self.lftd.wdth * self.rtio)
@@ -183,15 +184,25 @@ class Qdsply:
         self.lftbgbf.wipe()
         self.rtbgbf.wipe()
 
-        qbf = Dotbf(txt=q)
-        if qbf.wdth < self.lftd.wdth:
-            self.qbf = Dotbf(self.lftd.wdth)
-            dlta = (self.qbf.wdth - qbf.wdth) // 2
-            qbf.writebf(self.qbf, dlta, 0)
+        # set left & right question buffers
+        lq = rq = q
+        if q == "?":
+            lq = a + " or " + b + "?"
+            rq = b + " or " + a + "?"
+
+        lqbf = Dotbf(txt=lq)
+        rqbf = Dotbf(txt=rq)
+        if lqbf.wdth < self.lftd.wdth:
+            self.lqbf = Dotbf(self.lftd.wdth)
+            self.rqbf = Dotbf(self.lftd.wdth)
+            dlta = (self.lqbf.wdth - lqbf.wdth) // 2
+            lqbf.writebf(self.lqbf, dlta, 0)
+            rqbf.writebf(self.rqbf, dlta, 0)
             self.mxqscroll = 0
         else:
-            self.qbf = qbf
-            self.mxqscroll = self.qbf.wdth - self.lftd.wdth
+            self.lqbf = lqbf
+            self.rqbf = rqbf
+            self.mxqscroll = self.lqbf.wdth - self.lftd.wdth
             print("mxqscroll:", self.mxqscroll)
 
         self.qscroll = 0
