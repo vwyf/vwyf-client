@@ -214,7 +214,7 @@ class Qdsply:
         
         self.qst = Qst.qscroll # start scrolling!
 
-    def vote(self, a, ratio, dpth=10): # a -> bool, true if vote is for a
+    def vote(self, a, ratio, dpth=20): # a -> bool, true if vote is for a
         """add depth to a or b vote buzzer"""
         self.rtio = ratio
         self.vst = True
