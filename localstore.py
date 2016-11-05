@@ -1,3 +1,4 @@
+import random
 import logging
 from sqlalchemy import func
 
@@ -106,7 +107,37 @@ def _get_question_logs_map(session = Session()):
   return dict(question_id_count_pairs)
 
 
-# priority: urgent: 0, hight: 1, medium: 2, low: 3
+# Question Weight:
+# 0 answer collected: 20x
+# urgent: 0, weight 5x
+# hight: 1, weight 3x
+# medium: 2, weight 2x
+# low: 3, weight 1x
+# turned off: 4, weight 0x
+def _get_question_weight(q):
+  if (q.count_a == 0 and q.count_b == 0):
+    return 20
+  else:
+    return {
+      0: 5,
+      1: 3,
+      2: 2,
+      3: 1,
+      4: 0
+    }[q.priority]
+
+def _weighted_choice(questions):
+  total = sum(_get_question_weight(q) for q in questions)
+  r = random.uniform(0, total)
+  upto = 0
+  for q in questions:
+    w = _get_question_weight(q)
+    if upto + w >= r:
+      return q
+    upto += w
+  raise Exception('should not go here')
+
+# Randomly choose next question to display, based on weight
 def get_next_question():
   session = Session()
   all_questions = session.query(Question).all()
@@ -115,11 +146,7 @@ def get_next_question():
     logging.error('Question list is empty.')
     return
 
-  question_logs_map = _get_question_logs_map(session)
+  return _weighted_choice(all_questions)
 
-  def getKey(q):
-    num_of_logs = question_logs_map.get(q.id, 0)
-    return (num_of_logs + 1) * (10 ** q.priority)
-  
-  return sorted(all_questions, key=getKey)[0]
+
 
