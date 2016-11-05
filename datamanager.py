@@ -44,10 +44,10 @@ def _data_daemon_worker():
       logging.info("running data daemon loop: " + str(num_of_loops))
       _sync_questions_with_server()
       _save_answers_to_server()
-      time.sleep(180)
     except:
       logging.error("data daemon loop failed at: " + str(num_of_loops))
-      time.sleep(300)
+    finally:
+      time.sleep(60)
 
 # Note that we set 'check_same_thread' to false for sqlalchemy To avoid potential
 # concurrency issue with SQLite:
